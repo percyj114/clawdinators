@@ -24,7 +24,7 @@ GitHub App (preferred):
 Agenix (local secrets repo):
 - Store encrypted files in `../nix/nix-secrets` (relative to this repo).
 - Decrypt on host with agenix; point NixOS options at `/run/agenix/*`.
-- Required files (minimum): `clawdinator-github-app.pem.age`, `clawdinator-discord-token.age`, `anthropic-api-key.age`.
+- Required files (minimum): `clawdinator-github-app.pem.age`, `clawdinator-discord-token.age`, `clawdis-anthropic-api-key.age`.
 
 Example NixOS wiring (agenix):
 ```
@@ -34,15 +34,15 @@ Example NixOS wiring (agenix):
 
   age.secrets."clawdinator-github-app.pem".file =
     "${inputs.secrets}/clawdinator-github-app.pem.age";
-  age.secrets."anthropic-api-key".file =
-    "${inputs.secrets}/anthropic-api-key.age";
+  age.secrets."clawdis-anthropic-api-key".file =
+    "${inputs.secrets}/clawdis-anthropic-api-key.age";
   age.secrets."clawdinator-discord-token".file =
     "${inputs.secrets}/clawdinator-discord-token.age";
 
   services.clawdinator.githubApp.privateKeyFile =
     "/run/agenix/clawdinator-github-app.pem";
   services.clawdinator.anthropicApiKeyFile =
-    "/run/agenix/anthropic-api-key";
+    "/run/agenix/clawdis-anthropic-api-key";
   services.clawdinator.discordTokenFile =
     "/run/agenix/clawdinator-discord-token";
 }
