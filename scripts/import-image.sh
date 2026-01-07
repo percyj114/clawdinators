@@ -8,6 +8,8 @@ if [ -z "${image_url}" ]; then
 fi
 
 location="${HCLOUD_LOCATION:-nbg1}"
+description="${IMAGE_DESCRIPTION:-clawdinator-nixos}"
+labels="${IMAGE_LABELS:-clawdinator=true}"
 
 docker run --rm \
   -e HCLOUD_TOKEN="${HCLOUD_TOKEN:?HCLOUD_TOKEN required}" \
@@ -16,4 +18,6 @@ docker run --rm \
   --image-url "${image_url}" \
   --architecture x86 \
   --compression zstd \
-  --location "${location}"
+  --location "${location}" \
+  --description "${description}" \
+  --labels "${labels}"

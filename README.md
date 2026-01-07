@@ -52,7 +52,7 @@ Image-based deploy (Option A, recommended):
    - `zstd dist/nixos.img -o dist/nixos.img.zst`
 3) Upload the image to S3 (private object; use a presigned URL for import).
 4) Import into Hetzner:
-   - Use `hcloud-upload-image` (Hetzner Cloud does not support direct URL imports).
+   - Use `hcloud-upload-image` (creates a snapshot image via a temporary server).
 5) Point OpenTofu at the image name or id and provision.
 6) Re-key agenix secrets to the new host SSH key and sync secrets to `/var/lib/clawd/nix-secrets`.
 7) Run `nixos-rebuild switch --flake /var/lib/clawd/repo#clawdinator-1`.

@@ -47,4 +47,6 @@ jobs:
         env:
           HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
           HCLOUD_LOCATION: nbg1
+          IMAGE_DESCRIPTION: clawdinator-nixos
+          IMAGE_LABELS: clawdinator=true
         run: scripts/import-image.sh "${IMAGE_URL}"
