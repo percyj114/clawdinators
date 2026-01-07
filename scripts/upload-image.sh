@@ -12,21 +12,21 @@ if [ -z "${bucket}" ] || [ -z "${region}" ]; then
 fi
 
 img_path="${out_dir}/nixos.img"
-zst_path="${out_dir}/nixos.img.zst"
+tmp_dir="$(mktemp -d)"
+zst_path="${tmp_dir}/nixos.img.zst"
 
 if [ ! -f "${img_path}" ]; then
   echo "Missing ${img_path}. Run build-image.sh first." >&2
   exit 1
 fi
 
-if [ ! -f "${zst_path}" ]; then
-  zstd "${img_path}" -o "${zst_path}"
-fi
+zstd -c "${img_path}" > "${zst_path}"
 
 timestamp="$(date -u +%Y%m%d-%H%M%S)"
 object_key="${prefix}/nixos-${timestamp}.img.zst"
 
 aws s3 cp "${zst_path}" "s3://${bucket}/${object_key}" --region "${region}"
+rm -rf "${tmp_dir}"
 
 if [ -n "${S3_PUBLIC_URL:-}" ]; then
   echo "${S3_PUBLIC_URL}"
