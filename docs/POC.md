@@ -18,7 +18,7 @@ Secrets wiring:
 - Infra: HCLOUD_TOKEN env var for OpenTofu and hcloud CLI.
  
 Image pipeline:
-- Build a bootstrap image with nixos-generators (raw-efi) from `nix/hosts/clawdinator-1-image.nix`, compress, upload, import into Hetzner.
+- Build a bootstrap image with nixos-generators (raw-efi) from `nix/hosts/clawdinator-1-image.nix`, compress, upload, import into Hetzner using `hcloud-upload-image`.
 - OpenTofu provisions instances from the imported custom image, then nixos-rebuild applies full config.
 - Runtime: explicit token files via agenix (standard).
 - GitHub token is required. Prefer GitHub App (`services.clawdinator.githubApp.*`) to mint short-lived tokens.

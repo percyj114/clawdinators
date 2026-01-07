@@ -7,12 +7,13 @@ if [ -z "${image_url}" ]; then
   exit 1
 fi
 
-name="${IMAGE_NAME:-clawdinator-nixos-$(date -u +%Y%m%d-%H%M%S)}"
-description="${IMAGE_DESCRIPTION:-CLAWDINATOR NixOS image}"
+location="${HCLOUD_LOCATION:-nbg1}"
 
-hcloud image create \
-  --from-url "${image_url}" \
-  --type custom \
+docker run --rm \
+  -e HCLOUD_TOKEN="${HCLOUD_TOKEN:?HCLOUD_TOKEN required}" \
+  ghcr.io/apricote/hcloud-upload-image:latest \
+  upload \
+  --image-url "${image_url}" \
   --architecture x86 \
-  --name "${name}" \
-  --description "${description}"
+  --compression zstd \
+  --location "${location}"
