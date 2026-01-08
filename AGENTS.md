@@ -62,6 +62,7 @@ Deploy flow (automation-first):
 - Build a bootstrap NixOS image with nixos-generators (raw) and upload it to S3.
   - Use `nix/hosts/clawdinator-1-image.nix` for image builds.
 - CI is preferred: `.github/workflows/image-build.yml` runs build → S3 upload → AMI import.
+- Resume AMI pipeline work immediately if it stalls; do not use rsync or in-place host edits as a workaround.
 - CI must provide `CLAWDINATOR_AGE_KEY` (private key) so the image can bake `/etc/agenix/keys/clawdinator.agekey`.
 - Bootstrap S3 bucket + scoped IAM user + VM Import role with `infra/opentofu/aws` (use homelab-admin creds).
 - Bootstrap AWS instances from the AMI with `infra/opentofu/aws` (set `TF_VAR_ami_id`).
