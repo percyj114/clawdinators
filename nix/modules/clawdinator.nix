@@ -366,7 +366,12 @@ in
 
     environment.systemPackages =
       [ cfg.package ]
-      ++ toolchain.packages;
+      ++ toolchain.packages
+      ++ [
+        (pkgs.writeShellScriptBin "memory-read" ''exec /etc/clawdinator/bin/memory-read "$@"'')
+        (pkgs.writeShellScriptBin "memory-write" ''exec /etc/clawdinator/bin/memory-write "$@"'')
+        (pkgs.writeShellScriptBin "memory-edit" ''exec /etc/clawdinator/bin/memory-edit "$@"'')
+      ];
 
     environment.etc."clawd/clawdbot.json".source = configSource;
     environment.etc."clawdinator/bin/memory-read" = {
@@ -495,7 +500,7 @@ in
       wants = [ "remote-fs.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash ${../../scripts/init-memory.sh} ${cfg.memoryEfs.mountPoint}";
+        ExecStart = "${pkgs.bash}/bin/bash ${../../scripts/init-memory.sh} ${cfg.memoryEfs.mountPoint} ${cfg.user} ${cfg.group}";
       };
     };
 
