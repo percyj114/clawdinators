@@ -75,6 +75,10 @@
       agent.workspace = "/var/lib/clawd/workspace";
       agent.maxConcurrent = 4;
       agent.skipBootstrap = true;
+      logging = {
+        level = "info";
+        file = "/var/lib/clawd/logs/clawdbot.log";
+      };
       session.sendPolicy = {
         default = "allow";
         rules = [
