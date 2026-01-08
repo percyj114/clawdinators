@@ -41,11 +41,47 @@
     enable = true;
     instanceName = "CLAWDINATOR-1";
     memoryDir = "/var/lib/clawd/memory";
+    repoSeeds = [
+      {
+        name = "clawdbot";
+        url = "https://github.com/clawdbot/clawdbot.git";
+      }
+      {
+        name = "nix-clawdbot";
+        url = "https://github.com/clawdbot/nix-clawdbot.git";
+      }
+      {
+        name = "clawdinators";
+        url = "https://github.com/clawdbot/clawdinators.git";
+      }
+      {
+        name = "clawdhub";
+        url = "https://github.com/clawdbot/clawdhub.git";
+      }
+      {
+        name = "nix-steipete-tools";
+        url = "https://github.com/clawdbot/nix-steipete-tools.git";
+      }
+    ];
 
     config = {
       gateway.mode = "local";
       agent.workspace = "/var/lib/clawd/workspace";
       agent.maxConcurrent = 4;
+      agent.skipBootstrap = true;
+      session.sendPolicy = {
+        default = "allow";
+        rules = [
+          {
+            action = "deny";
+            match.keyPrefix = "agent:main:discord:channel:1458138963067011176";
+          }
+          {
+            action = "deny";
+            match.keyPrefix = "agent:main:discord:channel:1458141495701012561";
+          }
+        ];
+      };
       routing.queue = {
         mode = "interrupt";
         bySurface = {
@@ -69,6 +105,16 @@
                 allow = true;
                 requireMention = false;
                 autoReply = true;
+              };
+              # #clawdributors-test (lurk only; replies denied via sendPolicy)
+              "1458138963067011176" = {
+                allow = true;
+                requireMention = false;
+              };
+              # #clawdributors (lurk only; replies denied via sendPolicy)
+              "1458141495701012561" = {
+                allow = true;
+                requireMention = false;
               };
             };
           };

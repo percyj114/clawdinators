@@ -69,7 +69,16 @@ let
 
   configPath = "/etc/clawd/clawdbot.json";
   workspaceDir = "${cfg.stateDir}/workspace";
+  repoSeedBaseDir = cfg.repoSeedBaseDir;
   logDir = "${cfg.stateDir}/logs";
+  repoSeedsFile = pkgs.writeText "clawdinator-repos.tsv"
+    (lib.concatMapStringsSep "\n"
+      (repo:
+        let
+          branch = if repo.branch == null then "" else repo.branch;
+        in
+        "${repo.name}\t${repo.url}\t${branch}")
+      cfg.repoSeeds);
 
   tokenWrapper =
     if cfg.anthropicApiKeyFile != null || cfg.discordTokenFile != null || cfg.githubPatFile != null then
@@ -144,6 +153,40 @@ in
       type = types.str;
       default = "/var/lib/clawd/memory";
       description = "Shared hive-mind memory directory.";
+    };
+
+    repoSeedBaseDir = mkOption {
+      type = types.str;
+      default = "/var/lib/clawd/repos";
+      description = "Base directory for seeded git repos.";
+    };
+
+    repoSeeds = mkOption {
+      type = types.listOf (types.submodule ({ ... }: {
+        options = {
+          name = mkOption {
+            type = types.str;
+            description = "Repo directory name (under repoSeedBaseDir).";
+          };
+          url = mkOption {
+            type = types.str;
+            description = "Git clone URL.";
+          };
+          branch = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = "Optional branch to track.";
+          };
+        };
+      }));
+      default = [];
+      description = "Repos to seed into repoSeedBaseDir on startup.";
+    };
+
+    workspaceTemplateDir = mkOption {
+      type = types.path;
+      default = ../../clawdinator/workspace;
+      description = "Template directory for seeding the agent workspace.";
     };
 
     gatewayPort = mkOption {
@@ -287,6 +330,7 @@ in
       "d ${workspaceDir} 0750 ${cfg.user} ${cfg.group} - -"
       "d ${logDir} 0750 ${cfg.user} ${cfg.group} - -"
       "d ${cfg.memoryDir} 0750 ${cfg.user} ${cfg.group} - -"
+      "d ${repoSeedBaseDir} 0750 ${cfg.user} ${cfg.group} - -"
     ];
 
     systemd.services.clawdinator = {
@@ -305,11 +349,16 @@ in
         CLAWDIS_STATE_DIR = cfg.stateDir;
       };
 
+      path = [ pkgs.coreutils pkgs.git ];
       serviceConfig = {
         User = cfg.user;
         Group = cfg.group;
         WorkingDirectory = cfg.stateDir;
         EnvironmentFile = lib.optional cfg.githubApp.enable "-${cfg.githubApp.tokenEnvFile}";
+        ExecStartPre = [
+          "${../../scripts/seed-repos.sh} ${repoSeedsFile} ${repoSeedBaseDir}"
+          "${../../scripts/seed-workspace.sh} ${cfg.workspaceTemplateDir} ${workspaceDir}"
+        ];
         ExecStart =
           if tokenWrapper != null
           then "${tokenWrapper}/bin/clawdinator-gateway"

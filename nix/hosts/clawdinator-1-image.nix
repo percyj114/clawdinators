@@ -24,14 +24,6 @@
     source = ../keys/clawdinator.agekey;
     mode = "0400";
   };
-  environment.etc."clawdinator/AGENTS.md".source = ../../AGENTS.md;
-  environment.etc."clawdinator/BOOTSTRAP.md".source = ../../BOOTSTRAP.md;
-  environment.etc."clawdinator/CLAWDINATOR-SOUL.md".source = ../../CLAWDINATOR-SOUL.md;
-  environment.etc."clawdinator/HEARTBEAT.md".source = ../../HEARTBEAT.md;
-  environment.etc."clawdinator/IDENTITY.md".source = ../../IDENTITY.md;
-  environment.etc."clawdinator/SOUL.md".source = ../../SOUL.md;
-  environment.etc."clawdinator/TOOLS.md".source = ../../TOOLS.md;
-  environment.etc."clawdinator/USER.md".source = ../../USER.md;
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLItFT3SVm5r7gELrfRRJxh6V2sf/BIx7HKXt6oVWpB"
   ];
