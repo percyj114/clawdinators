@@ -135,6 +135,8 @@ in
       selfUpdate.enable = true;
       selfUpdate.flakePath = "/var/lib/clawd/repo";
       selfUpdate.flakeHost = "clawdinator-1";
+
+      githubSync.enable = true;
     };
   };
 }

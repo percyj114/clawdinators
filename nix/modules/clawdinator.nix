@@ -318,6 +318,22 @@ in
         description = "systemd OnCalendar schedule to refresh installation token.";
       };
     };
+
+    githubSync = {
+      enable = mkEnableOption "GitHub org sync (PRs and issues to memory)";
+
+      schedule = mkOption {
+        type = types.str;
+        default = "*:0/15";
+        description = "systemd OnCalendar schedule for GitHub sync (default: every 15 min).";
+      };
+
+      org = mkOption {
+        type = types.str;
+        default = "clawdbot";
+        description = "GitHub org to sync.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -519,6 +535,34 @@ in
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnCalendar = cfg.githubApp.schedule;
+        Persistent = true;
+      };
+    };
+
+    systemd.services.clawdinator-github-sync = lib.mkIf cfg.githubSync.enable {
+      description = "CLAWDINATOR GitHub org sync (PRs/issues to memory)";
+      after = [ "network-online.target" ] ++ lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service";
+      wants = [ "network-online.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        EnvironmentFile = lib.optional cfg.githubApp.enable "-${cfg.githubApp.tokenEnvFile}";
+      };
+      path = [ pkgs.gh pkgs.jq pkgs.coreutils pkgs.gnused ];
+      environment = {
+        MEMORY_DIR = cfg.memoryDir;
+        ORG = cfg.githubSync.org;
+      };
+      script = ''
+        exec ${../../scripts/gh-sync.sh}
+      '';
+    };
+
+    systemd.timers.clawdinator-github-sync = lib.mkIf cfg.githubSync.enable {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = cfg.githubSync.schedule;
         Persistent = true;
       };
     };

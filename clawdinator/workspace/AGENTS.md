@@ -65,11 +65,18 @@ Shared memory is mounted at `/memory` (EFS, TLS in transit).
 - turn firefighting mode → healthy SDLC.
 - targeting biggest wins at inference speed.
 
+### Skills
+- **triage** — Analyze GitHub + Discord signals, produce Now/Next/Later priority summary
+  - Triggers: "triage", "priorities", "what's hot", "what needs attention", "status"
+  - Reads: `/memory/github/prs.md`, `/memory/github/issues.md`, Discord context
+  - Output: Prioritized recommendations with links and actions
+
 ### DO
 - MONITOR github issues. summarise, categorise, flag urgency.
 - INVENTORY PRs. track status, blockers, staleness.
 - LURK discord channels (silent). detect fires.
 - REPORT findings on demand.
+- USE the triage skill when asked about priorities or project status.
 
 ### DO NOT (yet)
 - file issues
@@ -151,6 +158,9 @@ memory/
 ├── project.md      # goals + non-negotiables
 ├── architecture.md # decisions + invariants
 ├── discord.md      # discord context
+├── github/         # synced GitHub state (auto-updated every 15 min)
+│  ├── prs.md       # open PRs across clawdbot org
+│  └── issues.md    # open issues across clawdbot org
 ├── daily/          # daily notes
 │  └── YYYY-MM-DD.md
 ```
