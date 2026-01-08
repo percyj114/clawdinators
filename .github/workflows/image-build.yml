@@ -19,15 +19,9 @@ jobs:
         uses: cachix/install-nix-action@v27
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Enable public Nix caches
-        uses: DeterminateSystems/magic-nix-cache-action@v7
-
-      - name: Enable Cachix cache
-        uses: cachix/cachix-action@v14
-        with:
-          name: clawdinators
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://cache.garnix.io
+            extra-trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
 
       - name: Cache Nix store
         uses: nix-community/cache-nix-action@v5
