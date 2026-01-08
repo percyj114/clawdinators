@@ -478,7 +478,7 @@ in
       wants = [ "remote-fs.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${../../scripts/init-memory.sh} ${cfg.memoryEfs.mountPoint}";
+        ExecStart = "${pkgs.bash}/bin/bash ${../../scripts/init-memory.sh} ${cfg.memoryEfs.mountPoint}";
       };
     };
 
