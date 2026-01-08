@@ -36,5 +36,8 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLItFT3SVm5r7gELrfRRJxh6V2sf/BIx7HKXt6oVWpB"
   ];
 
-  clawdinator.secretsPath = toString ../age-secrets;
+  clawdinator.secretsPath = toString (builtins.path {
+    path = ../age-secrets;
+    name = "clawdinator-age-secrets";
+  });
 }
