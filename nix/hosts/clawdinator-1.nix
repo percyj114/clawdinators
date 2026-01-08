@@ -62,10 +62,14 @@
         dm.enabled = false;
         guilds = {
           "1456350064065904867" = {
-            requireMention = true;
+            requireMention = false;
             channels = {
               # #clawdinators-test
-              "1458426982579830908" = { allow = true; requireMention = false; };
+              "1458426982579830908" = {
+                allow = true;
+                requireMention = false;
+                autoReply = true;
+              };
             };
           };
         };
