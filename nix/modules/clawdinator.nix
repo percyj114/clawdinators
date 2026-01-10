@@ -538,7 +538,7 @@ in
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
       wants =
         lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service"
-        lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
+        ++ lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
 
       environment = {
