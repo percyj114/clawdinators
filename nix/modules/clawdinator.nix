@@ -668,7 +668,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ConditionPathExists = "!/run/agenix";
-        ExecStart = "${config.system.build.toplevel}/bin/switch-to-configuration switch";
+        ExecStart = "/run/current-system/bin/switch-to-configuration switch";
       };
     };
 
