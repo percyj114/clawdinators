@@ -63,7 +63,8 @@ Deploy flow (automation-first):
   - Use `nix/hosts/clawdinator-1-image.nix` for image builds.
 - CI is preferred: `.github/workflows/image-build.yml` runs build → S3 upload → AMI import.
 - Resume AMI pipeline work immediately if it stalls; do not use rsync as a workaround. Host edits are allowed but must be committed and baked into a new AMI to persist.
-- CI must provide `CLAWDINATOR_AGE_KEY` (private key) so the image can bake `/etc/agenix/keys/clawdinator.agekey`.
+- CI must provide `CLAWDINATOR_AGE_KEY` to build + upload the runtime bootstrap bundle to S3.
+- Bootstrap bundle location: `s3://${S3_BUCKET}/bootstrap/<instance>/` (secrets + repo seeds).
 - Bootstrap S3 bucket + scoped IAM user + VM Import role with `infra/opentofu/aws` (use homelab-admin creds).
 - Bootstrap AWS instances from the AMI with `infra/opentofu/aws` (set `TF_VAR_ami_id`).
 - Import the image into AWS as an AMI (snapshot import + register image).

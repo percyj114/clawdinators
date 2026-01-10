@@ -44,7 +44,8 @@ jobs:
             nixpkgs#nixos-generators \
             nixpkgs#awscli2 \
             nixpkgs#age \
-            nixpkgs#jq
+            nixpkgs#jq \
+            nixpkgs#zstd
 
       - name: Write agenix image key
         env:
@@ -89,6 +90,16 @@ jobs:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         run: |
           scripts/prepare-repo-seeds.sh repo-seeds
+
+      - name: Upload bootstrap bundle
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          BOOTSTRAP_PREFIX: bootstrap/clawdinator-1
+        run: |
+          scripts/upload-bootstrap.sh
 
       - name: Build image
         run: scripts/build-image.sh

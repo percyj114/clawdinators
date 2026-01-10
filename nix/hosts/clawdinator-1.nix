@@ -21,5 +21,4 @@
 
   networking.firewall.allowedTCPPorts = [ 22 18789 ];
 
-  clawdinator.secretsPath = "/var/lib/clawd/nix-secrets";
 }

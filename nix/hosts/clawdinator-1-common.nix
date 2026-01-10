@@ -26,6 +26,8 @@ in
   };
 
   config = {
+    clawdinator.secretsPath = "/var/lib/clawd/nix-secrets";
+
     age.identityPaths = [ "/etc/agenix/keys/clawdinator.agekey" ];
     age.secrets."clawdinator-github-app.pem" = {
       file = "${secretsPath}/clawdinator-github-app.pem.age";
@@ -52,6 +54,16 @@ in
       enable = true;
       instanceName = "CLAWDINATOR-1";
       memoryDir = "/memory";
+      repoSeedSnapshotDir = "/var/lib/clawd/repo-seeds";
+      bootstrap = {
+        enable = true;
+        s3Bucket = "clawdinator-images-eu1-20260107165216";
+        s3Prefix = "bootstrap/clawdinator-1";
+        region = "eu-central-1";
+        secretsDir = "/var/lib/clawd/nix-secrets";
+        repoSeedsDir = "/var/lib/clawd/repo-seeds";
+        ageKeyPath = "/etc/agenix/keys/clawdinator.agekey";
+      };
       memoryEfs = {
         enable = true;
         fileSystemId = "fs-0e7920726c2965a88";

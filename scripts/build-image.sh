@@ -9,34 +9,6 @@ if [ -e "${out_dir}" ]; then
   rm -rf "${out_dir}"
 fi
 
-if [ -f nix/keys/clawdinator.agekey ]; then
-  export CLAWDINATOR_AGE_KEY
-  CLAWDINATOR_AGE_KEY="$(cat nix/keys/clawdinator.agekey)"
-else
-  echo "Missing nix/keys/clawdinator.agekey" >&2
-  exit 1
-fi
-
-if [ -z "${CLAWDINATOR_SECRETS_DIR:-}" ]; then
-  if [ -d nix/age-secrets ]; then
-    export CLAWDINATOR_SECRETS_DIR
-    CLAWDINATOR_SECRETS_DIR="$(pwd)/nix/age-secrets"
-  else
-    echo "Missing nix/age-secrets; set CLAWDINATOR_SECRETS_DIR" >&2
-    exit 1
-  fi
-fi
-
-if [ -z "${CLAWDINATOR_REPO_SEEDS_DIR:-}" ]; then
-  if [ -d repo-seeds ]; then
-    export CLAWDINATOR_REPO_SEEDS_DIR
-    CLAWDINATOR_REPO_SEEDS_DIR="$(pwd)/repo-seeds"
-  else
-    echo "Missing repo-seeds; set CLAWDINATOR_REPO_SEEDS_DIR" >&2
-    exit 1
-  fi
-fi
-
 nix run --impure github:nix-community/nixos-generators -- --flake "${flake_ref}" -f "${format}" -o "${out_dir}"
 
 out_real="${out_dir}"

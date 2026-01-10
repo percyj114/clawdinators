@@ -14,6 +14,8 @@
     pkgs.util-linux
     pkgs.nfs-utils
     pkgs.stunnel
+    pkgs.awscli2
+    pkgs.zstd
   ];
 
   docs = [
@@ -31,5 +33,7 @@
     { name = "util-linux"; description = "Provides flock used by memory wrappers."; }
     { name = "nfs-utils"; description = "NFS client utilities for EFS."; }
     { name = "stunnel"; description = "TLS tunnel for EFS in transit."; }
+    { name = "awscli2"; description = "AWS CLI for bootstrap S3 pulls."; }
+    { name = "zstd"; description = "Compression tool for bootstrap archives."; }
   ];
 }

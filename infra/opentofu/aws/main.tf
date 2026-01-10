@@ -167,6 +167,37 @@ resource "aws_iam_role_policy_attachment" "instance_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+data "aws_iam_policy_document" "instance_bootstrap" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectAttributes"
+    ]
+    resources = [
+      "${aws_s3_bucket.image_bucket.arn}/bootstrap/*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [aws_s3_bucket.image_bucket.arn]
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values   = ["bootstrap/*"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "instance_bootstrap" {
+  name   = "clawdinator-bootstrap"
+  role   = aws_iam_role.instance.id
+  policy = data.aws_iam_policy_document.instance_bootstrap.json
+}
+
 resource "aws_iam_instance_profile" "instance" {
   name = "clawdinator-instance"
   role = aws_iam_role.instance.name

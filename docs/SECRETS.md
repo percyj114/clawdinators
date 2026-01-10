@@ -8,7 +8,7 @@ Infrastructure (OpenTofu):
 
 Image pipeline (CI):
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` / `S3_BUCKET` (required).
-- `CLAWDINATOR_AGE_KEY` (required; private age key baked into the AMI).
+- `CLAWDINATOR_AGE_KEY` (required; used to build the bootstrap bundle uploaded to S3).
 
 Local storage:
 - Keep AWS keys encrypted in `../nix/nix-secrets` for local runs if needed.
@@ -35,10 +35,17 @@ Agenix (local secrets repo):
 - Store encrypted files in `../nix/nix-secrets` (relative to this repo).
 - Sync encrypted secrets to the host at `/var/lib/clawd/nix-secrets`.
 - Decrypt on host with agenix; point NixOS options at `/run/agenix/*`.
-- Image builds bake the agenix identity to `/etc/agenix/keys/clawdinator.agekey`; do not commit this key.
+- Image builds do **not** bake the agenix identity; the age key is injected at runtime via the bootstrap bundle.
 - Required files (minimum): `clawdinator-github-app.pem.age`, `clawdinator-discord-token.age`, `clawdinator-anthropic-api-key.age`.
 - Also required for OpenAI: `clawdinator-openai-api-key-peter-2.age`.
 - CI image pipeline (stored locally, not on hosts): `clawdinator-image-uploader-access-key-id.age`, `clawdinator-image-uploader-secret-access-key.age`, `clawdinator-image-bucket-name.age`, `clawdinator-image-bucket-region.age`.
+
+Bootstrap bundle (runtime injection):
+- CI uploads `secrets.tar.zst` + `repo-seeds.tar.zst` to `s3://${S3_BUCKET}/bootstrap/<instance>/`.
+- `secrets.tar.zst` contains:
+  - `clawdinator.agekey`
+  - `secrets/` directory with `*.age` files.
+- The host downloads + installs these on boot (`clawdinator-bootstrap.service`).
 
 Example NixOS wiring (agenix):
 ```

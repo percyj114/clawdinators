@@ -211,9 +211,60 @@ in
     };
 
     repoSeedSnapshotDir = mkOption {
-      type = types.nullOr types.path;
+      type = types.nullOr types.str;
       default = null;
       description = "Optional path to a preseeded repo snapshot (directory of repos). When set, no network cloning happens at boot.";
+    };
+
+    bootstrap = {
+      enable = mkEnableOption "Bootstrap secrets + repo seeds from S3";
+
+      s3Bucket = mkOption {
+        type = types.str;
+        description = "S3 bucket holding bootstrap artifacts.";
+      };
+
+      s3Prefix = mkOption {
+        type = types.str;
+        default = "bootstrap/${cfg.instanceName}";
+        description = "S3 prefix for bootstrap artifacts (relative to bucket).";
+      };
+
+      region = mkOption {
+        type = types.str;
+        default = "eu-central-1";
+        description = "AWS region for S3 bootstrap bucket.";
+      };
+
+      secretsArchive = mkOption {
+        type = types.str;
+        default = "secrets.tar.zst";
+        description = "Secrets archive name inside the bootstrap prefix.";
+      };
+
+      repoSeedsArchive = mkOption {
+        type = types.str;
+        default = "repo-seeds.tar.zst";
+        description = "Repo seeds archive name inside the bootstrap prefix.";
+      };
+
+      ageKeyPath = mkOption {
+        type = types.str;
+        default = "/etc/agenix/keys/clawdinator.agekey";
+        description = "Destination path for the agenix identity key.";
+      };
+
+      secretsDir = mkOption {
+        type = types.str;
+        default = "/var/lib/clawd/nix-secrets";
+        description = "Destination directory for encrypted age secrets.";
+      };
+
+      repoSeedsDir = mkOption {
+        type = types.str;
+        default = "/var/lib/clawd/repo-seeds";
+        description = "Destination directory for repo seed snapshots.";
+      };
     };
 
     workspaceTemplateDir = mkOption {
@@ -482,9 +533,11 @@ in
       wantedBy = [ "multi-user.target" ];
       after =
         [ "network.target" ]
+        ++ lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service"
         ++ lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
       wants =
+        lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service"
         lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
 
@@ -527,13 +580,38 @@ in
       description = "CLAWDINATOR repo seed (snapshot copy)";
       wantedBy = [ "multi-user.target" ];
       before = [ "clawdinator.service" ];
-      after = [ "local-fs.target" ];
+      after =
+        [ "local-fs.target" ]
+        ++ lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service";
+      requires = lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service";
       serviceConfig = {
         Type = "oneshot";
         User = "root";
       };
       path = [ pkgs.rsync pkgs.coreutils ];
       script = "${pkgs.bash}/bin/bash ${../../scripts/seed-repos-from-snapshot.sh} ${cfg.repoSeedSnapshotDir} ${repoSeedBaseDir} ${cfg.user} ${cfg.group}";
+    };
+
+    systemd.services.clawdinator-bootstrap = lib.mkIf cfg.bootstrap.enable {
+      description = "CLAWDINATOR bootstrap (S3 secrets + repo seeds)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      environment = {
+        AWS_REGION = cfg.bootstrap.region;
+        AWS_DEFAULT_REGION = cfg.bootstrap.region;
+      };
+      path = [ pkgs.awscli2 pkgs.coreutils pkgs.gnutar pkgs.zstd ];
+      script = "${pkgs.bash}/bin/bash ${../../scripts/bootstrap-runtime.sh} ${cfg.bootstrap.s3Bucket} ${cfg.bootstrap.s3Prefix} ${cfg.bootstrap.secretsDir} ${cfg.bootstrap.repoSeedsDir} ${cfg.bootstrap.ageKeyPath} ${cfg.bootstrap.secretsArchive} ${cfg.bootstrap.repoSeedsArchive}";
+    };
+
+    systemd.services.agenix = lib.mkIf cfg.bootstrap.enable {
+      requires = [ "clawdinator-bootstrap.service" ];
+      after = [ "clawdinator-bootstrap.service" ];
     };
 
     systemd.services.clawdinator-efs-stunnel = lib.mkIf cfg.memoryEfs.enable {

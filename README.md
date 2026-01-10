@@ -99,13 +99,13 @@ Image‑based deploy (only path):
 2) Upload the raw image to S3 (private object).
 3) Import into AWS as an AMI (snapshot import + register image).
 4) Launch hosts from the AMI (OpenTofu `infra/opentofu/aws`).
-5) Ensure secrets are encrypted to the baked agenix key and sync them to `/var/lib/clawd/nix-secrets`.
-6) Run `nixos-rebuild switch --flake /var/lib/clawd/repo#clawdinator-1`.
+5) Upload the runtime bootstrap bundle to `s3://<bucket>/bootstrap/<instance>/` (secrets + repo seeds).
+6) Hosts download secrets at boot (`clawdinator-bootstrap.service`) and then run `nixos-rebuild switch --flake /var/lib/clawd/repo#clawdinator-1`.
 
 CI (recommended):
 - GitHub Actions builds the image, uploads to S3, and imports an AMI.
 - See `.github/workflows/image-build.yml` and `scripts/*.sh`.
-- CI must provide `CLAWDINATOR_AGE_KEY` so the image can bake `/etc/agenix/keys/clawdinator.agekey`.
+- CI must provide `CLAWDINATOR_AGE_KEY` to build + upload the runtime bootstrap bundle.
 
 AWS bucket bootstrap:
 - `infra/opentofu/aws` provisions a private S3 bucket + scoped IAM user + VM Import role.
