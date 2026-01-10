@@ -583,10 +583,12 @@ in
       after =
         [ "network.target" ]
         ++ lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service"
+        ++ lib.optional cfg.bootstrap.enable "clawdinator-agenix.service"
         ++ lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
       wants =
         lib.optional cfg.bootstrap.enable "clawdinator-bootstrap.service"
+        ++ lib.optional cfg.bootstrap.enable "clawdinator-agenix.service"
         ++ lib.optional cfg.githubApp.enable "clawdinator-github-app-token.service"
         ++ lib.optional (cfg.repoSeedSnapshotDir != null) "clawdinator-repo-seed.service";
 
@@ -656,6 +658,18 @@ in
       };
       path = [ pkgs.awscli2 pkgs.coreutils pkgs.gnutar pkgs.zstd ];
       script = "${pkgs.bash}/bin/bash ${../../scripts/bootstrap-runtime.sh} ${cfg.bootstrap.s3Bucket} ${cfg.bootstrap.s3Prefix} ${cfg.bootstrap.secretsDir} ${cfg.bootstrap.repoSeedsDir} ${cfg.bootstrap.ageKeyPath} ${cfg.bootstrap.secretsArchive} ${cfg.bootstrap.repoSeedsArchive}";
+    };
+
+    systemd.services.clawdinator-agenix = lib.mkIf cfg.bootstrap.enable {
+      description = "CLAWDINATOR agenix (post-bootstrap activation)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "clawdinator-bootstrap.service" ];
+      wants = [ "clawdinator-bootstrap.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ConditionPathExists = "!/run/agenix";
+        ExecStart = "${config.system.build.toplevel}/bin/switch-to-configuration switch";
+      };
     };
 
     systemd.services.agenix = lib.mkIf cfg.bootstrap.enable {
