@@ -403,7 +403,7 @@ in
 
       org = mkOption {
         type = types.str;
-        default = "moltbot";
+        default = "openclaw";
         description = "GitHub org to sync.";
       };
     };

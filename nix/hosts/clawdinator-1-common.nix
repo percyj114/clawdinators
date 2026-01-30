@@ -182,6 +182,7 @@ in
       selfUpdate.flakeHost = "clawdinator-1";
 
       githubSync.enable = true;
+      githubSync.org = "openclaw";
 
       cronJobsFile = ../../clawdinator/cron-jobs.json;
     };

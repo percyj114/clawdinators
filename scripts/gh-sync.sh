@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gh-sync.sh — Pure IO sync of GitHub state for moltbot org
+# gh-sync.sh — Pure IO sync of GitHub state for configured org
 # ZFC-compliant: no reasoning, no scoring, no heuristics
 # Writes raw data to memory/github/ for AI to reason about
 
@@ -30,8 +30,8 @@ issues_tmp=$(mktemp)
 trap 'rm -f "$prs_tmp" "$issues_tmp"' EXIT
 
 # Header for PRs
-cat > "$prs_tmp" << 'EOF'
-# Open Pull Requests (moltbot org)
+cat > "$prs_tmp" << EOF
+# Open Pull Requests (${ORG} org)
 
 Last synced: SYNC_TIME
 
@@ -39,8 +39,8 @@ EOF
 sed -i.bak "s/SYNC_TIME/$(date -u +%Y-%m-%dT%H:%M:%SZ)/" "$prs_tmp" && rm -f "${prs_tmp}.bak"
 
 # Header for Issues
-cat > "$issues_tmp" << 'EOF'
-# Open Issues (moltbot org)
+cat > "$issues_tmp" << EOF
+# Open Issues (${ORG} org)
 
 Last synced: SYNC_TIME
 
