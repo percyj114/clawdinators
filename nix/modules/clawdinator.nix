@@ -442,6 +442,7 @@ in
       group = cfg.group;
       home = cfg.stateDir;
       createHome = true;
+      shell = pkgs.bashInteractive;
     };
 
     environment.systemPackages =
