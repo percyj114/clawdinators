@@ -78,6 +78,11 @@ let
     then pkgs.openclaw-gateway
     else pkgs.openclaw;
 
+  gatewayBin =
+    if builtins.pathExists "${cfg.package}/bin/openclaw"
+    then "${cfg.package}/bin/openclaw"
+    else "${cfg.package}/bin/moltbot";
+
   configPath = "/etc/clawd/openclaw.json";
   workspaceDir = "${cfg.stateDir}/workspace";
   repoSeedBaseDir = cfg.repoSeedBaseDir;
@@ -127,7 +132,7 @@ let
         ${lib.optionalString (cfg.githubPatFile != null) "read_token \"GITHUB_TOKEN GH_TOKEN\" \"${cfg.githubPatFile}\""}
         ${lib.optionalString (cfg.openaiApiKeyFile != null) "read_token \"OPENAI_API_KEY OPEN_AI_APIKEY\" \"${cfg.openaiApiKeyFile}\""}
 
-        exec "${cfg.package}/bin/openclaw" gateway --port ${toString cfg.gatewayPort}
+        exec "${gatewayBin}" gateway --port ${toString cfg.gatewayPort}
       ''
     else
       null;
@@ -618,7 +623,7 @@ in
         ExecStart =
           if tokenWrapper != null
           then "${tokenWrapper}/bin/clawdinator-gateway"
-          else "${cfg.package}/bin/openclaw gateway --port ${toString cfg.gatewayPort}";
+          else "${gatewayBin} gateway --port ${toString cfg.gatewayPort}";
         Restart = "always";
         RestartSec = 2;
         StandardOutput = "append:${logDir}/gateway.log";
