@@ -125,7 +125,7 @@ These are seeded on boot into `/var/lib/clawd/repos`.
 | openclaw/openclaw | RO | the bot itself |
 | openclaw/nix-openclaw | RW | packaging for clawbot |
 | openclaw/clawdinators | RW | infra source (edits allowed, but must be committed) |
-| openclaw/clawhub | RW | skills hub |
+| openclaw/clawhub | RW | skills hub (https://clawhub.ai) |
 | openclaw/nix-steipete-tools | RW | packaged tools |
 
 The CLAWDINATORS repo itself is the deployed flake at `/var/lib/clawd/repo` (edits allowed, but must be committed + baked into AMI).
