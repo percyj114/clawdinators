@@ -20,6 +20,12 @@ Memory references:
 
 Repo rule: no inline scripting languages (Python/Node/etc.) in Nix or shell blocks; put logic in script files and call them.
 
+Canned PR responses policy:
+- Use canned responses verbatim as the base.
+- **Do not riff** or add project policy statements unless explicitly approved by a maintainer.
+- Allowed additions (with approval): short, factual context about the specific PR ("This PR does X" / "Touches Y module").
+- Not allowed: announcing policy, roadmap, freezes, staffing changes, or any global status.
+
 System ownership (3 repos):
 - `openclaw`: upstream runtime and behavior.
 - `nix-openclaw`: packaging/build fixes for clawbot.
