@@ -88,11 +88,11 @@ in
           skipBootstrap = true;
           models = {
             "anthropic/claude-opus-4-5" = { alias = "Opus"; };
-            "openai/gpt-5-codex" = { alias = "Codex"; };
+            "openai/gpt-5.2-codex" = { alias = "Codex"; };
           };
           model = {
-            primary = "anthropic/claude-opus-4-5";
-            fallbacks = [ "openai/gpt-5.2-codex" ];
+            primary = "openai/gpt-5.2-codex";
+            fallbacks = [ "anthropic/claude-opus-4-5" ];
           };
         };
         agents.list = [
