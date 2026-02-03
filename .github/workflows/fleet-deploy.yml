@@ -29,7 +29,7 @@ jobs:
       TF_BACKEND_DYNAMO_TABLE: clawdinator-terraform-locks
       TF_VAR_control_api_enabled: true
       TF_VAR_control_api_token: ${{ secrets.CONTROL_API_TOKEN }}
-      TF_VAR_github_token: ${{ secrets.GITHUB_WORKFLOW_TOKEN }}
+      TF_VAR_github_token: ${{ secrets.CLAWDINATOR_WORKFLOW_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

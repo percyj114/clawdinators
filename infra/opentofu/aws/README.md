@@ -63,7 +63,7 @@ export TF_VAR_github_token=...
   - `S3_BUCKET`
   - `CLAWDINATOR_SSH_PUBLIC_KEY`
   - `CONTROL_API_TOKEN`
-  - `GITHUB_WORKFLOW_TOKEN`
+  - `CLAWDINATOR_WORKFLOW_TOKEN`
 
 ## Runtime bootstrap
 - Instances get an IAM role with read access to `s3://${S3_BUCKET}/bootstrap/*` for secrets + repo seeds.
