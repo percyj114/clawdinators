@@ -124,6 +124,15 @@ data "aws_iam_policy_document" "ami_importer" {
   }
 
   statement {
+    sid = "BucketRead"
+    actions = [
+      "s3:GetBucket*",
+      "s3:GetEncryptionConfiguration"
+    ]
+    resources = [aws_s3_bucket.image_bucket.arn]
+  }
+
+  statement {
     sid = "ObjectReadWrite"
     actions = [
       "s3:GetObject",
@@ -133,6 +142,19 @@ data "aws_iam_policy_document" "ami_importer" {
       "s3:ListMultipartUploadParts"
     ]
     resources = ["${aws_s3_bucket.image_bucket.arn}/*"]
+  }
+
+  statement {
+    sid = "InfraRead"
+    actions = [
+      "ec2:Describe*",
+      "elasticfilesystem:Describe*",
+      "iam:Get*",
+      "iam:List*",
+      "dynamodb:Describe*",
+      "dynamodb:ListTagsOfResource"
+    ]
+    resources = ["*"]
   }
 
   statement {
