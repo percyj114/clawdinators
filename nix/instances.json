@@ -10,5 +10,11 @@
     "instanceType": "t3.large",
     "bootstrapPrefix": "bootstrap/clawdinator-2",
     "discordTokenSecret": "clawdinator-discord-token-2"
+  },
+  "clawdinator-babelfish": {
+    "host": "clawdinator-babelfish",
+    "instanceType": "t3.small",
+    "bootstrapPrefix": "bootstrap/clawdinator-babelfish",
+    "discordTokenSecret": "clawdinator-discord-token-babelfish"
   }
 }
