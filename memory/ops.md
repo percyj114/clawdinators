@@ -37,3 +37,6 @@ Update with incidents, fixes, and operational lessons.
 - AMI: ami-004e1c2ade3e2b9e6 (used for babelfish deploy; bootstrap bundle updated).
 - Instance: clawdinator-babelfish: i-00b889d8ad5977eba (IP 3.76.43.198, DNS ec2-3-76-43-198.eu-central-1.compute.amazonaws.com).
 - Note: CLAWDINATOR-BABELFISH translation-only bot on t3.small; transient hostname still clawdinator-1 (static clawdinator-babelfish).
+- Redeployed babelfish after config schema fix:
+  - Instance: i-0d966485e75e60437 (IP 63.177.84.106, DNS ec2-63-177-84-106.eu-central-1.compute.amazonaws.com).
+  - AMI: ami-004e1c2ade3e2b9e6.
