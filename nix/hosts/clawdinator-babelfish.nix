@@ -136,6 +136,7 @@
               "1467469670192910387" = {
                 allow = true;
                 requireMention = false;
+                includeThreadStarter = false;
                 users = [ "*" ];
                 skills = [ ];
                 systemPrompt = ''
