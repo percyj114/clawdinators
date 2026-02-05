@@ -20,4 +20,7 @@
   ];
 
   networking.firewall.allowedTCPPorts = [ 22 ];
+
+  services.clawdinator.config.plugins.entries.telegram.enabled = false;
+  services.clawdinator.config.channels.telegram.enabled = false;
 }
