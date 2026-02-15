@@ -2,10 +2,13 @@
 let
   cfg = config.services.clawdinator;
 
+  configFragmentsMerged = lib.foldl' lib.recursiveUpdate {} cfg.configFragments;
+  effectiveConfig = lib.recursiveUpdate cfg.config configFragmentsMerged;
+
   configSource =
     if cfg.configFile != null
     then cfg.configFile
-    else pkgs.writeText "openclaw.json" (builtins.toJSON cfg.config);
+    else pkgs.writeText "openclaw.json" (builtins.toJSON effectiveConfig);
 
   updateScript = pkgs.writeShellScript "clawdinator-self-update" ''
     set -euo pipefail
@@ -310,7 +313,13 @@ in
     config = mkOption {
       type = types.attrs;
       default = {};
-      description = "Raw Clawbot config JSON (merged into openclaw.json).";
+      description = "Raw Clawbot config JSON (base).";
+    };
+
+    configFragments = mkOption {
+      type = types.listOf types.attrs;
+      default = [];
+      description = "Additional OpenClaw config fragments, recursively merged into services.clawdinator.config (deep merge). Use this for small per-host tweaks without clobbering sibling keys.";
     };
 
     configFile = mkOption {

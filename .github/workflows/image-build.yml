@@ -1,5 +1,9 @@
 name: Build NixOS Image
 
+concurrency:
+  group: image-build-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
