@@ -2,13 +2,19 @@
 let
   cfg = config.services.clawdinator;
 
-  configFragmentsMerged = lib.foldl' lib.recursiveUpdate {} cfg.configFragments;
-  effectiveConfig = lib.recursiveUpdate cfg.config configFragmentsMerged;
+  # Deep-merge OpenClaw config attrsets across modules/hosts.
+  # Prevents per-host overrides like `config.channels.telegram.enabled = false` from clobbering sibling keys.
+  deepConfigType = lib.types.mkOptionType {
+    name = "openclaw-config-attrs";
+    description = "OpenClaw JSON config (attrset), merged deeply via lib.recursiveUpdate.";
+    check = builtins.isAttrs;
+    merge = _loc: defs: lib.foldl' lib.recursiveUpdate {} (map (d: d.value) defs);
+  };
 
   configSource =
     if cfg.configFile != null
     then cfg.configFile
-    else pkgs.writeText "openclaw.json" (builtins.toJSON effectiveConfig);
+    else pkgs.writeText "openclaw.json" (builtins.toJSON cfg.config);
 
   updateScript = pkgs.writeShellScript "clawdinator-self-update" ''
     set -euo pipefail
@@ -311,15 +317,9 @@ in
     };
 
     config = mkOption {
-      type = types.attrs;
+      type = deepConfigType;
       default = {};
-      description = "Raw Clawbot config JSON (base).";
-    };
-
-    configFragments = mkOption {
-      type = types.listOf types.attrs;
-      default = [];
-      description = "Additional OpenClaw config fragments, recursively merged into services.clawdinator.config (deep merge). Use this for small per-host tweaks without clobbering sibling keys.";
+      description = "OpenClaw config JSON (attrset), deep-merged across definitions.";
     };
 
     configFile = mkOption {

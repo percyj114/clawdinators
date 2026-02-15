@@ -21,10 +21,7 @@
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
-  services.clawdinator.configFragments = [
-    {
-      plugins.entries.telegram.enabled = false;
-      channels.telegram.enabled = false;
-    }
-  ];
+  # Discord-only instance: disable Telegram.
+  services.clawdinator.config.plugins.entries.telegram.enabled = false;
+  services.clawdinator.config.channels.telegram.enabled = false;
 }
