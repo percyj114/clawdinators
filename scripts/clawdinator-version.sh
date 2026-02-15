@@ -93,7 +93,21 @@ fi
 
 echo "nix-openclaw: $nix_openclaw_rev (lock age: $(human_age_from_epoch "$nix_openclaw_lm"))"
 echo "nixpkgs:     $nixpkgs_rev (lock age: $(human_age_from_epoch "$nixpkgs_lm"))"
+
 echo "openclaw:    $openclaw_rev"
+
+# Optional: enrich OpenClaw with commit timestamp/age via GitHub API (requires auth).
+if [ -n "$openclaw_rev" ] && command -v gh >/dev/null 2>&1; then
+  if gh auth status -h github.com >/dev/null 2>&1; then
+    openclaw_date="$(gh api \
+      -H 'Accept: application/vnd.github+json' \
+      "/repos/openclaw/openclaw/commits/${openclaw_rev}" \
+      --jq '.commit.committer.date' 2>/dev/null || true)"
+    if [ -n "$openclaw_date" ]; then
+      echo "  commit:   $openclaw_date ($(human_age_from_iso "$openclaw_date") ago)"
+    fi
+  fi
+fi
 
 if [ "$#" -ge 1 ] && [ "$1" = "--json" ]; then
   jq -c '.' "$info"
