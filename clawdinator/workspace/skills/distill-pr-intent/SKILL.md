@@ -1,7 +1,7 @@
 ---
 name: distill-pr-intent
 description: Side-effect-free distillation of a single OpenClaw PR into a short intent memo (stdout-only).
-user-invocable: true
+user-invocable: false
 ---
 
 # Distill PR Intent (single PR, stdout-only)

@@ -1,7 +1,7 @@
 ---
 name: distill-pr-intent-orchestrator
 description: Run PR intent distillation across a PR set and persist outputs + sidecar metadata to /memory/pr-intent.
-user-invocable: true
+user-invocable: false
 ---
 
 # Distill PR Intent — Orchestrator

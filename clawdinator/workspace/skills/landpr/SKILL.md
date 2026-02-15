@@ -1,8 +1,7 @@
 ---
 name: landpr
-description: Land an OpenClaw PR end-to-end using the repo landpr checklist. Use only when someone explicitly requests “/landpr” (deprecated workflow).
+description: Land an OpenClaw PR end-to-end using the repo landpr checklist. Use when someone requests “/landpr” or asks to merge/land a PR.
 user-invocable: true
-disable-model-invocation: true
 ---
 
 # Land PR (OpenClaw)

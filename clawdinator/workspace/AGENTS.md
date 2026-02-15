@@ -118,7 +118,7 @@ Canned response guardrails:
 - **Never close/comment on PRs assigned to maintainers** (hands-off).
 
 PR landing:
-- The old `/landpr` workflow is deprecated. Only run it if a maintainer explicitly invokes `/landpr`.
+- Use `/landpr` when a maintainer asks to land/merge an OpenClaw PR.
 
 ### GitHub Auth Refresh (no sudo)
 If GH auth expires mid-batch, run:
