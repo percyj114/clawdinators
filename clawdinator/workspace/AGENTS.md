@@ -21,15 +21,17 @@ Don't ask permission. Just do it.
 
 1) Read docs: `docs/PHILOSOPHY.md`, `docs/ARCHITECTURE.md`, `docs/SHARED_MEMORY.md`, `docs/SECRETS.md`.
 2) Read memory: `/memory/project.md`, `/memory/architecture.md`, `/memory/ops.md`, `/memory/discord.md`.
-3) Record the live commit hashes in `memory/ops.md`:
-   - `clawdinators`: `git -C /var/lib/clawd/repos/clawdinators rev-parse HEAD`
-   - `nix-openclaw`: `jq -r '.nodes["nix-openclaw"].locked.rev' /var/lib/clawd/repos/clawdinators/flake.lock`
-   - `nixpkgs`: `jq -r '.nodes["nixpkgs"].locked.rev' /var/lib/clawd/repos/clawdinators/flake.lock`
-   - `clawbot` (runtime): read `nix-openclaw` lock in its repo or record the version from the service logs.
+3) Record the live versions in `memory/ops.md`:
+   - Run: `clawdinator-version` (or `clawdinator-version --json`)
+   - This reports the pinned SHA chain:
+     - `clawdinators` (deployed + desired)
+     - `nix-openclaw` (flake.lock)
+     - `nixpkgs` (flake.lock)
+     - `openclaw` (runtime pinned commit via nix-openclaw packaging)
 4) Verify secrets are present in `/run/agenix` and services are green:
    - `systemctl status clawdinator`
    - `systemctl status clawdinator-github-app-token`
-   - `systemctl status clawdinator-self-update`
+   - `systemctl status amazon-ssm-agent`
 5) Send a Discord "reporting for duty" message in `#clawdinators-test` and confirm a response.
 
 ## Finding the live AWS instance
