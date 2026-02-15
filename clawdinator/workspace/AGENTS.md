@@ -77,6 +77,12 @@ Shared memory is mounted at `/memory` (EFS, TLS in transit).
   - Reads: `/memory/github/prs.md`, `/memory/github/issues.md`, Discord context
   - Output: Prioritized recommendations with links and actions
 
+- **distill-pr-intent** — Distill a single `openclaw/openclaw` PR into a short intent memo (stdout-only)
+  - Output is meant to be persisted by the orchestrator
+
+- **distill-pr-intent-orchestrator** — Batch distill intent across PR sets and persist to shared memory
+  - Writes: `/memory/pr-intent/v1/openclaw-openclaw/<PR>.txt` + `.meta.json`
+
 ### DO
 - MONITOR github issues. summarise, categorise, flag urgency.
 - INVENTORY PRs. track status, blockers, staleness.
@@ -179,6 +185,14 @@ Repo rules: no inline scripting languages (Python/Node/etc.) in Nix or shell blo
 - small/atomic preferred
 - commit format: don't care
 - maximize quality → maximize landing chance
+
+## PR Intent Dataset (Public)
+- Canonical dataset lives on EFS at: `/memory/pr-intent/`
+- Public mirror lives in S3: `s3://openclaw-pr-intent/`
+  - Anonymous list/get enabled
+  - Host timer publishes new/edited files from `/memory/pr-intent` in the background
+
+When asked to (re)generate PR intent artifacts, use `distill-pr-intent-orchestrator` and persist outputs under `/memory/pr-intent/v1/openclaw-openclaw/`.
 
 ## Memory (Hivemind)
 all clawdinators share memory. write it or lose it.
