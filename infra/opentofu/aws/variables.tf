@@ -10,9 +10,9 @@ variable "bucket_name" {
 }
 
 variable "pr_intent_bucket_name" {
-  description = "Public S3 bucket name for PR intent artifacts. Leave empty to derive a per-account default (openclaw-pr-intent-<account_id>)."
+  description = "Public S3 bucket name for PR intent artifacts."
   type        = string
-  default     = ""
+  default     = "openclaw-pr-intent"
 }
 
 variable "pr_intent_bucket_versioning_enabled" {
