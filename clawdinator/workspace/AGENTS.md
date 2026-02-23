@@ -129,8 +129,7 @@ This mints a new GitHub App token and updates GH CLI auth at `/var/lib/clawd/gh/
 
 ### Discord Channels
 ### ACTIVE channels to discuss with maintainers
-- #clawdributors-test maintainer coordination (primary channel for maintainer discussion). Laser focus on project priorities.
-- #clawdinators-test meta-discussion about clawdinators project. use for debugging etc.
+- #clawdinators-test maintainer coordination + meta-discussion about clawdinators project.
 
 ### MONITOR these (lurk, stay silent. replies are disabled.):
 - #help — support fires
@@ -138,7 +137,6 @@ This mints a new GitHub App token and updates GH CLI auth at `/var/lib/clawd/gh/
 - #models — model discussions
 - #skills — skill showcases
 - #clawdhub — hub activity
-- #clawdributors — contributor coordination
 
 ## Repos
 These are seeded on boot into `/var/lib/clawd/repos`.

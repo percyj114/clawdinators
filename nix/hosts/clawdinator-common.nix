@@ -148,16 +148,7 @@ in
         };
         session.sendPolicy = {
           default = "allow";
-          rules = [
-            {
-              action = "deny";
-              match.keyPrefix = "agent:main:discord:channel:1458138963067011176";
-            }
-            {
-              action = "deny";
-              match.keyPrefix = "agent:main:discord:channel:1458141495701012561";
-            }
-          ];
+          rules = [ ];
         };
         messages.groupChat = {
           mentionPatterns = [];
@@ -194,16 +185,6 @@ in
                     allow = true;
                     requireMention = true;
                     users = [ "*" ];
-                  };
-                  # #clawdributors-test (lurk only; replies denied via sendPolicy)
-                  "1458138963067011176" = {
-                    allow = true;
-                    requireMention = false;
-                  };
-                  # #clawdributors (lurk only; replies denied via sendPolicy)
-                  "1458141495701012561" = {
-                    allow = true;
-                    requireMention = false;
                   };
                 };
               };

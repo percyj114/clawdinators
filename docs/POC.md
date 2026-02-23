@@ -4,7 +4,7 @@ Acceptance criteria:
 - One AWS host provisioned from an AMI built from this repo.
 - Host created via OpenTofu using `infra/opentofu/aws`.
 - NixOS config applied via Nix (module or flake).
-- CLAWDINATOR-1 connects to Discord #clawdributors-test.
+- CLAWDINATOR-1 connects to Discord #clawdinators-test.
 - GitHub integration is read-only.
 - Shared memory directory mounted and writable.
 - Discord allowlist configured (guild + channels).

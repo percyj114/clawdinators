@@ -63,7 +63,7 @@ The patterns here work for any NixOS workload on AWS:
 
 The opinionated bits for running AI coding agents:
 
-- **Discord gateway**: Responds in `#clawdributors-test`
+- **Discord gateway**: Responds in `#clawdinators-test`
 - **GitHub integration**: Monitors issues/PRs, mints short-lived tokens via GitHub App
 - **Hive-mind memory**: Shared EFS mount for cross-instance state
 - **Personality system**: SOUL.md, IDENTITY.md, workspace templates
@@ -74,7 +74,7 @@ The opinionated bits for running AI coding agents:
 ## CLAWDINATOR Spec
 
 - CLAWDINATORS are named `CLAWDINATOR-{1..n}`.
-- CLAWDINATORS connect to Discord; start in `#clawdributors-test`.
+- CLAWDINATORS connect to Discord; start in `#clawdinators-test`.
 - CLAWDINATORS are ephemeral, but share memory (hive mind).
 - CLAWDINATORS are br00tal. Soul lives in `SOUL.md` and must be distilled into workspace docs.
 - CLAWDINATORS respond only to maintainers.
@@ -250,7 +250,7 @@ tofu apply
 ### Verify
 
 ```bash
-# Check Discord - CLAWDINATOR should announce itself in #clawdributors-test
+# Check Discord - CLAWDINATOR should announce itself in #clawdinators-test
 # Check GitHub - should see activity in openclaw org repos
 ```
 
