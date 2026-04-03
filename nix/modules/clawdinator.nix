@@ -514,8 +514,8 @@ in
         message = "services.clawdinator requires nix-openclaw overlay (pkgs.openclaw-gateway).";
       }
       {
-        assertion = cfg.githubApp.enable || cfg.githubPatFile != null;
-        message = "services.clawdinator requires a GitHub token (enable githubApp or set githubPatFile).";
+        assertion = (!cfg.githubSync.enable) || cfg.githubApp.enable || cfg.githubPatFile != null;
+        message = "services.clawdinator.githubSync requires GitHub auth (enable githubApp or set githubPatFile).";
       }
       {
         assertion = (!cfg.githubApp.enable) || (cfg.githubApp.appId != "" && cfg.githubApp.installationId != "");

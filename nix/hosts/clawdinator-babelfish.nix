@@ -21,8 +21,11 @@
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
+  clawdinator.bootstrapPrefix = "bootstrap/clawdinator-babelfish";
+  clawdinator.discordTokenSecret = "clawdinator-discord-token-babelfish";
+
   services.clawdinator = {
-    githubApp.enable = lib.mkForce true;
+    githubApp.enable = lib.mkForce false;
     githubSync.enable = lib.mkForce false;
     cronJobsFile = lib.mkForce null;
 

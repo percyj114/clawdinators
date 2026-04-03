@@ -87,7 +87,20 @@ for _ in {1..120}; do
       aws ec2 create-tags \
         --region "${region}" \
         --resources "${image_id}" \
-        --tags "Key=Name,Value=${ami_name}" "Key=clawdinator,Value=true"
+        --tags \
+        "Key=Name,Value=${ami_name}" \
+        "Key=clawdinator,Value=true" \
+        "Key=artifact-kind,Value=ami" \
+        "Key=source-s3-key,Value=${key}"
+
+      aws ec2 create-tags \
+        --region "${region}" \
+        --resources "${snapshot_id}" \
+        --tags \
+        "Key=Name,Value=${ami_name}-root-snapshot" \
+        "Key=clawdinator,Value=true" \
+        "Key=artifact-kind,Value=ami-root-snapshot" \
+        "Key=source-s3-key,Value=${key}"
       echo "AMI_ID=${image_id}" >&2
       echo "${image_id}"
       exit 0

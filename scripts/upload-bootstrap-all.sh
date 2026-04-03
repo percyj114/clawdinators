@@ -33,7 +33,10 @@ while IFS= read -r instance_name; do
   instance_secrets="${workdir}/${instance_name}/secrets"
   mkdir -p "${instance_secrets}"
 
-  rsync -a --exclude 'clawdinator-discord-token-*.age' "${secrets_dir}/" "${instance_secrets}/"
+  rsync -a \
+    --exclude 'clawdinator-discord-token-*.age' \
+    --exclude 'clawdinator-github-app.pem.age' \
+    "${secrets_dir}/" "${instance_secrets}/"
 
   if [ ! -f "${secrets_dir}/${token_secret}.age" ]; then
     echo "Missing instance token ${secrets_dir}/${token_secret}.age" >&2

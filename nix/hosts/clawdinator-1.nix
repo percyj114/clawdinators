@@ -21,6 +21,9 @@
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
+  clawdinator.bootstrapPrefix = "bootstrap/clawdinator-1";
+  clawdinator.discordTokenSecret = "clawdinator-discord-token-1";
+
   # Publish PR intent artifacts from EFS to the public bucket.
   # (Timer + oneshot service; safe to run without stopping the gateway.)
   services.clawdinator.publicS3 = {

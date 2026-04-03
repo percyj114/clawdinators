@@ -21,6 +21,9 @@
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
+  clawdinator.bootstrapPrefix = "bootstrap/clawdinator-2";
+  clawdinator.discordTokenSecret = "clawdinator-discord-token-2";
+
   # Discord-only instance: disable Telegram.
   services.clawdinator.config.plugins.entries.telegram.enabled = false;
   services.clawdinator.config.channels.telegram.enabled = false;

@@ -105,6 +105,7 @@ Example:
 
 ### Roll the fleet
 - `/fleet deploy all` replaces every host with latest AMI.
+- Old AMI history is intentionally bounded. Normal operations keep the currently used fleet AMI plus a small recent rollback window; deeper rollback requires an explicit preserved AMI id.
 
 ## Self‑Recycle (Out‑of‑Band)
 - Agents call the Control API (no AWS creds) via the fleet-control skill.
@@ -118,6 +119,7 @@ Example:
 ## AMI Selection (KISS)
 - Use latest AMI tagged `clawdinator=true`.
 - Optional override via workflow input `ami_override` for rollback.
+- Automatic retention keeps the newest few tagged AMIs plus any AMI still backing a live CLAWDINATOR instance.
 
 ## Deploy Execution (Workflow)
 - Single workflow `fleet-deploy.yml`.
@@ -157,6 +159,7 @@ Example:
 - `/fleet deploy clawdinator-2` → bring up new host.
 - `/fleet deploy all` → roll the fleet to latest AMI.
 - If rollback needed: rerun deploy with `ami_override` (exact AMI id).
+- If the exact rollback AMI is older than the bounded retention window, preserve it intentionally before relying on it.
 
 ## Implementation Checklist (From Design → Works)
 1) Add `nix/instances.json` (clawdinator‑1 + clawdinator‑2).

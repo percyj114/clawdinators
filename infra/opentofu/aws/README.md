@@ -2,6 +2,8 @@
 
 Goal: manage the CLAWDINATOR fleet infrastructure (S3 image bucket, VM import role, EFS, EC2 instances, and control-plane Lambda).
 
+The shared image bucket is not image-only. It also stores bootstrap bundles, age-encrypted secrets, and Terraform remote state. Raw image uploads therefore use a prefix-scoped lifecycle rule: only top-level `clawdinator-nixos-*` objects expire automatically. Bootstrap, secrets, and state are intentionally retained.
+
 ## Prereqs
 - AWS credentials with permissions to manage IAM (use your homelab-admin key locally).
 - Fleet registry: `nix/instances.json` (authoritative instance list).
@@ -73,3 +75,9 @@ export TF_VAR_github_token=...
 
 ## Runtime bootstrap
 - Instances get an IAM role with read access to `s3://${S3_BUCKET}/bootstrap/*` for secrets + repo seeds.
+
+## Retention contract
+- Raw image uploads whose keys start with `clawdinator-nixos-` expire automatically after 14 days.
+- Because bucket versioning is enabled, noncurrent raw-image versions are also expired so the bytes actually disappear.
+- The CI IAM user can prune old CLAWDINATOR AMIs and their backing snapshots.
+- Normal deploys still use the latest self-owned AMI tagged `clawdinator=true`.

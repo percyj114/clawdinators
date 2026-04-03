@@ -2,14 +2,9 @@
 let
   cfg = config.services.clawdinator;
   secretsPath = config.clawdinator.secretsPath;
-  instancesFile = ../instances.json;
-  instances = builtins.fromJSON (builtins.readFile instancesFile);
   hostName = config.networking.hostName;
-  instance =
-    if builtins.hasAttr hostName instances
-    then instances.${hostName}
-    else throw "clawdinator: missing instance ${hostName} in ${instancesFile}";
-  discordTokenSecret = instance.discordTokenSecret;
+  bootstrapPrefix = config.clawdinator.bootstrapPrefix;
+  discordTokenSecret = config.clawdinator.discordTokenSecret;
   repoSeedsFile = ../../clawdinator/repos.tsv;
   repoSeedLines =
     lib.filter
@@ -34,17 +29,22 @@ in
     description = "Path to encrypted age secrets for CLAWDINATOR.";
   };
 
+  options.clawdinator.bootstrapPrefix = lib.mkOption {
+    type = lib.types.str;
+    description = "Bootstrap S3 prefix for this host.";
+  };
+
+  options.clawdinator.discordTokenSecret = lib.mkOption {
+    type = lib.types.str;
+    description = "Encrypted Discord token secret name for this host.";
+  };
+
   config = {
     clawdinator.secretsPath = "/var/lib/clawd/nix-secrets";
 
     swapDevices = [ { device = "/swapfile"; size = 8192; } ];
 
     age.identityPaths = [ "/etc/agenix/keys/clawdinator.agekey" ];
-    age.secrets."clawdinator-github-app.pem" = {
-      file = "${secretsPath}/clawdinator-github-app.pem.age";
-      owner = "clawdinator";
-      group = "clawdinator";
-    };
     age.secrets."clawdinator-anthropic-api-key" = {
       file = "${secretsPath}/clawdinator-anthropic-api-key.age";
       owner = "clawdinator";
@@ -97,7 +97,7 @@ in
       bootstrap = {
         enable = true;
         s3Bucket = "clawdinator-images-eu1-20260107165216";
-        s3Prefix = instance.bootstrapPrefix;
+        s3Prefix = bootstrapPrefix;
         region = "eu-central-1";
         secretsDir = "/var/lib/clawd/nix-secrets";
         repoSeedsDir = "/var/lib/clawd/repo-seeds";
@@ -205,20 +205,9 @@ in
       discordTokenFile = "/run/agenix/${discordTokenSecret}";
       telegramAllowFromFile = "/run/agenix/clawdinator-telegram-allow-from";
 
-      githubApp = {
-        enable = true;
-        appId = "2607181";
-        installationId = "102951645";
-        privateKeyFile = "/run/agenix/clawdinator-github-app.pem";
-        schedule = "*:0/45"; # every 45 min — tokens expire after 1h
-      };
-
-      # We deploy via CI (release.yml) pinned to a git SHA; avoid host-local
-      # `nix flake update` drift.
+      # Hosts do not self-mutate. Replacements and switches are explicit operator
+      # actions, which avoids host-local `nix flake update` drift.
       selfUpdate.enable = false;
-
-      githubSync.enable = true;
-      githubSync.org = "openclaw";
 
       cronJobsFile = ../../clawdinator/cron-jobs.json;
     };

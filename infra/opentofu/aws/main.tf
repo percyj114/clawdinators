@@ -49,6 +49,33 @@ resource "aws_s3_bucket_versioning" "image_bucket" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "image_bucket" {
+  bucket = aws_s3_bucket.image_bucket.id
+
+  rule {
+    id     = "expire-clawdinator-raw-images"
+    status = "Enabled"
+
+    filter {
+      prefix = "clawdinator-nixos-"
+    }
+
+    expiration {
+      days = 14
+    }
+
+    # Versioning is enabled on the shared bucket, so expiring the current object
+    # alone would leave the bytes behind as noncurrent versions.
+    noncurrent_version_expiration {
+      noncurrent_days = 1
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+  }
+}
+
 resource "aws_dynamodb_table" "terraform_lock" {
   name         = var.terraform_lock_table_name
   billing_mode = "PAY_PER_REQUEST"
@@ -187,7 +214,9 @@ data "aws_iam_policy_document" "ami_importer" {
       "ec2:DescribeImages",
       "ec2:DescribeSnapshots",
       "ec2:RegisterImage",
-      "ec2:CreateTags"
+      "ec2:CreateTags",
+      "ec2:DeregisterImage",
+      "ec2:DeleteSnapshot"
     ]
     resources = ["*"]
   }

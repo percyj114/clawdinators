@@ -4,12 +4,12 @@ This repo uses a **two-lane** delivery model:
 
 - **Lane A: Base AMI** (slow path, rare)
   - Purpose: reliable boot substrate (Nix + systemd + networking + EFS + SSM + bootstrap services).
-  - Built by: `.github/workflows/image-build.yml` (manual or scheduled).
+  - Built by: explicit operator flow. The old `.github/workflows/image-build.yml` workflow is intentionally disabled under `.github/workflows-disabled/`.
   - Tradeoff: EC2 VM Import is slow/variable; do not run per-commit.
 
-- **Lane B: Release + Fleet switch** (fast path, every merge)
+- **Lane B: Release + Fleet switch** (fast path, manual)
   - Purpose: ship config/app changes quickly while staying reproducible.
-  - Built by: `.github/workflows/release.yml`.
+  - Built by: explicit operator flow. The old `.github/workflows/release.yml` workflow is intentionally disabled under `.github/workflows-disabled/`.
   - Steps:
     1) **Fail-fast eval** of NixOS configs.
     2) Upload **bootstrap bundles** to S3 (repo seeds, workspace, secrets references).
@@ -38,7 +38,7 @@ This repo uses a **two-lane** delivery model:
 
 ## Infra requirement: CI SSM permissions
 
-`release.yml` uses `aws ssm send-command`.
+The old `release.yml` workflow used `aws ssm send-command`; that path is intentionally disabled now.
 
 After pulling these changes, run `tofu apply` in `infra/opentofu/aws` (with admin creds)
 so the CI IAM policy includes the `FleetDeploySSM` statement.

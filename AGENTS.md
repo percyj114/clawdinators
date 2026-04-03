@@ -62,7 +62,8 @@ Deploy flow (automation-first):
 - Use `devenv.nix` for tooling (nixos-generators, awscli2).
 - Build a bootstrap NixOS image with nixos-generators (raw) and upload it to S3.
   - Use `nix/hosts/clawdinator-1-image.nix` for image builds.
-- CI is preferred: `.github/workflows/image-build.yml` runs build → S3 upload → AMI import.
+- The old CI AMI/update/release workflows are intentionally disabled under `.github/workflows-disabled/`; AMI builds and deploys now require an explicit code change or a local operator run.
+- Image history is bounded on purpose: raw `clawdinator-nixos-*` uploads expire automatically, and old CLAWDINATOR AMIs/snapshots are pruned after successful builds while keeping the live fleet AMI plus a short rollback window.
 - Resume AMI pipeline work immediately if it stalls; do not use rsync as a workaround. Host edits are allowed but must be committed and baked into a new AMI to persist.
 - CI must provide `CLAWDINATOR_AGE_KEY` to build + upload the runtime bootstrap bundle to S3.
 - Bootstrap bundle location: `s3://${S3_BUCKET}/bootstrap/<instance>/` (secrets + repo seeds).
@@ -74,7 +75,7 @@ Deploy flow (automation-first):
 - Update `nix/hosts/<host>.nix` (Discord allowlist, GitHub App installationId, identity name).
 - Discord must use `messages.queue.byChannel.discord = "interrupt"`; `queue` delays replies to heartbeat and makes the bot appear dead.
 - Ensure `/var/lib/clawd/repos/clawdinators` contains this repo (self-update requires it).
-- Verify systemd services: `clawdinator`, `clawdinator-github-app-token`, `clawdinator-self-update`.
+- Verify systemd services: `clawdinator`; `clawdinator-github-app-token` only on hosts that explicitly enable GitHub App auth.
 - Commit and push changes; repo is the source of truth.
 
 Bootstrap (local):
@@ -102,19 +103,16 @@ End-to-end SDLC (local → AMI → host) **(verified)**:
    - `RULES=./secrets.nix agenix -d homelab-admin.age -i ~/.ssh/id_ed25519 > /tmp/homelab-admin.env`
    - `set -a; source /tmp/homelab-admin.env; set +a`
    - Cleanup: `trash /tmp/homelab-admin.env`
-2) Push to `main` to trigger AMI build (`.github/workflows/image-build.yml`).
-3) Watch CI:
-   - `gh run list -R openclaw/clawdinators --limit 5`
-   - `gh run view <run_id> --log | grep AMI_ID`
-4) Redeploy from the new AMI (instance replacement):
+2) Build/import a new AMI explicitly. The old GitHub Actions build/deploy paths are disabled under `.github/workflows-disabled/`.
+3) Redeploy from the new AMI (instance replacement):
    - `devenv shell -- bash -lc "cd infra/opentofu/aws && TF_VAR_ami_id=<AMI_ID> TF_VAR_ssh_public_key=\"$(cat ~/.ssh/id_ed25519.pub)\" TF_VAR_aws_region=eu-central-1 tofu apply -auto-approve"`
-5) New IP:
+4) New IP:
    - `tofu output -json instance_public_ips | jq -r '."clawdinator-1"'`
    - `ssh -o StrictHostKeyChecking=accept-new root@<ip>`
-6) Post-deploy sanity:
+5) Post-deploy sanity:
    - `systemctl is-active clawdinator`
-   - `systemctl is-active clawdinator-github-app-token.timer`
-   - `GH_CONFIG_DIR=/var/lib/clawd/gh gh auth status -h github.com`
+   - `systemctl is-active clawdinator-github-app-token.timer` only if the target host explicitly enables `githubApp`
+   - `GH_CONFIG_DIR=/var/lib/clawd/gh gh auth status -h github.com` only if the target host explicitly enables GitHub auth
 
 Important:
 - Repo/workspace on host is seeded from the **AMI snapshot**. `git pull` is ephemeral; rebuild AMI for persistent changes.
